@@ -18,8 +18,10 @@ FRONT_FONT_COLOR = "black"
 
 back_language = "Español"
 back_language_code = "es"
+back_language_accent = "com.mx"
 front_language = "English"
 front_language_code = "en"
+front_language_accent = "com"
 
 # File Paths:
 initial_data_path = "data/English_data.csv"
@@ -30,6 +32,8 @@ updated_data_path = "data/English_to_learn.csv"
 USA_FLAG = "images/flag_usa.png"
 SPAIN_FLAG = "images/flag_spain.png"
 ITALY_FLAG = "images/flag_italy.png"
+FRANCE_FLAG = "images/flag_france.png"
+BRAZIL_FLAG = "images/flag_brazil.png"
 
 front_country_name = "USA"
 back_country_name = "SPAIN"
@@ -51,7 +55,7 @@ text_to_speech.save("output.mp3")
 
 
 def english_to_spanish():
-    change_language(target_language="English", target_language_code="en", target_country_name="USA",
+    change_language(target_language="English", target_language_code="en", target_country_name="USA", accent="us",
                     target_country_flag_photoimage=usa_flag_photoimage, word_translated="Word",
                     pronunciation_translated="pronunciation", back_country_flag_photoimage=spain_flag_photoimage)
 
@@ -62,15 +66,28 @@ def italian_to_spanish():
                     pronunciation_translated="pronuncia", back_country_flag_photoimage=spain_flag_photoimage)
 
 
+def french_to_spanish():
+    change_language(target_language="Français", target_language_code="fr", target_country_name="FRANCE",
+                    target_country_flag_photoimage=france_flag_photoimage, word_translated="Mot",
+                    pronunciation_translated="prononciation", back_country_flag_photoimage=spain_flag_photoimage)
+
+
+def portuguese_to_spanish():
+    change_language(target_language="Português", target_language_code="pt", target_country_name="BRAZIL",
+                    accent="com.br", target_country_flag_photoimage=brazil_flag_photoimage, word_translated="Palavra",
+                    pronunciation_translated="pronúncia", back_country_flag_photoimage=spain_flag_photoimage)
+
+
 def change_language(target_language, target_language_code, target_country_name, target_country_flag_photoimage,
-                    word_translated, pronunciation_translated, back_country_flag_photoimage,
+                    word_translated, pronunciation_translated, back_country_flag_photoimage, accent="com",
                     translation_language="Español", translation_language_code="es", translation_country_name="SPAIN"):
 
     global front_language, front_language_code, front_country_name, back_language, back_language_code
     global back_country_name, initial_data_path, updated_data_path, front_card_flag, back_card_flag
-    global spain_flag_photoimage
+    global spain_flag_photoimage, front_language_accent
     front_language = target_language.capitalize()
     front_language_code = target_language_code
+    front_language_accent = accent
     front_country_name = target_country_name.upper()
     initial_data_path = f"data/{front_language}_data.csv"
     front_card_flag = target_country_flag_photoimage
@@ -107,7 +124,7 @@ def flip_card():
         canvas.itemconfig(flag, image=back_card_flag)
         text_to_speech.text = current_card[back_language]
         text_to_speech.lang = back_language_code
-        text_to_speech.tld = "com.mx"
+        text_to_speech.tld = back_language_accent
         text_to_speech.save("output.mp3")
         audio = mixer.Sound("output.mp3")
         audio.play()
@@ -116,7 +133,7 @@ def flip_card():
 def next_card():
     """Generates and shows a new card, then calls the flip_card function after a given time"""
     global current_card, flip_timer, data, to_learn, text_to_speech, front_language_code
-    root.after_cancel(flip_timer)  # Cancels the previous timer
+    root.after_cancel(flip_timer)  # Cancel the previous timer
     try:
         updated_data = pandas.read_csv(updated_data_path)
         words_to_learn = updated_data.to_dict(orient="records")
@@ -141,6 +158,7 @@ def next_card():
         mixer.init()
         text_to_speech.text = current_card[front_language]
         text_to_speech.lang = front_language_code
+        text_to_speech.tld = front_language_accent
         text_to_speech.save("output.mp3")
         audio = mixer.Sound("output.mp3")
         audio.play()
@@ -205,7 +223,7 @@ to_learn = data.to_dict(orient="records")
 root = Tk()
 root.title("Flashcard App")
 root.config(bg=BACKGROUND_COLOR, padx=40, pady=50)
-root.geometry("+300+60")
+root.geometry("+300+50")
 flip_timer = root.after(FLIP_TIME, func=flip_card)  # Flip timer
 
 # Images
@@ -220,6 +238,8 @@ wrong_img = PhotoImage(file="images/wrong.png")
 usa_flag_photoimage = PhotoImage(file=USA_FLAG)  # Flags
 italy_flag_photoimage = PhotoImage(file=ITALY_FLAG)
 spain_flag_photoimage = PhotoImage(file=SPAIN_FLAG)
+france_flag_photoimage = PhotoImage(file=FRANCE_FLAG)
+brazil_flag_photoimage = PhotoImage(file=BRAZIL_FLAG)
 front_card_flag = usa_flag_photoimage
 back_card_flag = spain_flag_photoimage
 
@@ -249,7 +269,7 @@ root.withdraw()
 language_window = Toplevel()
 language_window.title("Select Language")
 language_window.config(bg=LANGUAGE_WINDOW_BG_COLOR, padx=50, pady=50)
-language_window.geometry("+420+200")
+language_window.geometry("+420+100")
 language_window.iconphoto(False, icon)
 
 # Label: Select your language
@@ -262,6 +282,12 @@ english_button.grid(row=1, column=0, padx=20, pady=20)
 
 italian_button = Button(language_window, image=italy_flag_photoimage, bd=3, command=italian_to_spanish)
 italian_button.grid(row=1, column=1, padx=20, pady=20)
+
+french_button = Button(language_window, image=france_flag_photoimage, bd=3, command=french_to_spanish)
+french_button.grid(row=2, column=0, padx=20, pady=20)
+
+portuguese_button = Button(language_window, image=brazil_flag_photoimage, bd=3, command=portuguese_to_spanish)
+portuguese_button.grid(row=2, column=1, padx=20, pady=20)
 
 language_window.protocol("WM_DELETE_WINDOW", on_closing)
 
