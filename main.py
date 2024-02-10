@@ -138,7 +138,7 @@ def next_card():
     try:
         updated_data = pandas.read_csv(updated_data_path)
         words_to_learn = updated_data.to_dict(orient="records")
-        canvas.itemconfig(score, text=f"{(len(to_learn) - len(words_to_learn)) + 1} / {len(to_learn)}",
+        canvas.itemconfig(score, text=f"{len(to_learn) - len(words_to_learn) + 1} / {len(to_learn) + 1}",
                           fill=FRONT_FONT_COLOR)
         if len(words_to_learn) < 2:
             well_done = messagebox.showinfo(message=NO_MORE_CARDS_MESSAGE,
