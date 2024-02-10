@@ -53,7 +53,8 @@ current_card = {}  # Current Card Dictionary
 # Starting Audio
 mixer.init()
 text_to_speech = gTTS(text="Welcome", lang="en", tld="us")
-text_to_speech.save("output.mp3")
+text_to_speech.save("audio/output.mp3")
+click = mixer.Sound("audio/mouse_click_effect.wav")
 
 
 def english_to_spanish():
@@ -127,8 +128,8 @@ def flip_card():
         text_to_speech.text = current_card[back_language]
         text_to_speech.lang = back_language_code
         text_to_speech.tld = back_language_accent
-        text_to_speech.save("output.mp3")
-        audio = mixer.Sound("output.mp3")
+        text_to_speech.save("audio/output.mp3")
+        audio = mixer.Sound("audio/output.mp3")
         audio.play()
 
 
@@ -136,6 +137,7 @@ def next_card():
     """Generates and shows a new card, then calls the flip_card function after a given time"""
     global current_card, flip_timer, data, to_learn, text_to_speech, front_language_code
     root.after_cancel(flip_timer)  # Cancel the previous timer
+    click.play()
     try:
         updated_data = pandas.read_csv(updated_data_path)
         words_to_learn = updated_data.to_dict(orient="records")
@@ -165,8 +167,8 @@ def next_card():
         text_to_speech.text = current_card[front_language]
         text_to_speech.lang = front_language_code
         text_to_speech.tld = front_language_accent
-        text_to_speech.save("output.mp3")
-        audio = mixer.Sound("output.mp3")
+        text_to_speech.save("audio/output.mp3")
+        audio = mixer.Sound("audio/output.mp3")
         audio.play()
         flip_timer = root.after(FLIP_TIME, func=flip_card)
 
@@ -260,10 +262,10 @@ score = canvas.create_text(670, 60, text="", fill="black", font=SCORE_FONT)
 canvas.grid(row=0, column=0, columnspan=2)
 
 # Buttons:
-unknown_button = Button(image=wrong_img, highlightthickness=0, bd=0, command=next_card)
+unknown_button = Button(image=wrong_img, highlightthickness=0, bd=7, command=next_card)
 unknown_button.grid(row=1, column=0)
 
-known_button = Button(image=right_img, highlightthickness=0, bd=0, command=remove_known_word)
+known_button = Button(image=right_img, highlightthickness=0, bd=7, command=remove_known_word)
 known_button.grid(row=1, column=1)
 
 # Bind the closing button to the function on_closing to ask the user if he wants to exit
@@ -287,28 +289,28 @@ select_language_label.grid(row=0, column=0, columnspan=3, padx=20, pady=25)
 english_label = Label(language_window, text="English", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
                       fg=FRONT_FONT_COLOR)
 english_label.grid(row=1, column=0, sticky="S")
-english_button = Button(language_window, image=usa_flag_photoimage, bd=3, command=english_to_spanish)
+english_button = Button(language_window, image=usa_flag_photoimage, bd=5, command=english_to_spanish)
 english_button.grid(row=2, column=0)
 
 italian_label = Label(language_window, text="Italiano", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
                       fg=FRONT_FONT_COLOR)
 italian_label.grid(row=1, column=1, sticky="S")
-italian_button = Button(language_window, image=italy_flag_photoimage, bd=3, command=italian_to_spanish)
+italian_button = Button(language_window, image=italy_flag_photoimage, bd=5, command=italian_to_spanish)
 italian_button.grid(row=2, column=1, padx=15)
 
-space = Label(language_window, text="",bg=LANGUAGE_WINDOW_BG_COLOR, pady=10)
+space = Label(language_window, text="", bg=LANGUAGE_WINDOW_BG_COLOR, pady=10)
 space.grid(row=3, column=3)
 
 french_label = Label(language_window, text="Français", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
                      fg=FRONT_FONT_COLOR)
 french_label.grid(row=4, column=0, sticky="S")
-french_button = Button(language_window, image=france_flag_photoimage, bd=3, command=french_to_spanish)
+french_button = Button(language_window, image=france_flag_photoimage, bd=5, command=french_to_spanish)
 french_button.grid(row=5, column=0, padx=20)
 
 portuguese_label = Label(language_window, text="Português", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
                          fg=FRONT_FONT_COLOR)
 portuguese_label.grid(row=4, column=1, sticky="S")
-portuguese_button = Button(language_window, image=brazil_flag_photoimage, bd=3, command=portuguese_to_spanish)
+portuguese_button = Button(language_window, image=brazil_flag_photoimage, bd=5, command=portuguese_to_spanish)
 portuguese_button.grid(row=5, column=1, padx=20)
 
 language_window.protocol("WM_DELETE_WINDOW", on_closing)
