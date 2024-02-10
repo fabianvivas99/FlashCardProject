@@ -11,7 +11,9 @@ BACKGROUND_COLOR = "#B1DDC6"
 LANGUAGE_WINDOW_BG_COLOR = "#B1DDC6"
 WORD_FONT = ("Ariel", 60, "bold")
 LANGUAGE_FONT = ("Ariel", 40, "italic")
-SELECT_LANGUAGE_FONT = ("Ariel", 20, "italic")
+SELECT_LANGUAGE_FONT = ("Ariel", 26, "italic", "bold", "underline")
+SCORE_FONT = ("Ariel", 20, "italic", "bold",)
+LANGUAGES_SELECTION_FONT = ("Ariel", 18, "italic")
 FLIP_TIME = 2500  # Milliseconds
 BACK_FONT_COLOR = "white"
 FRONT_FONT_COLOR = "black"
@@ -39,7 +41,7 @@ front_country_name = "USA"
 back_country_name = "SPAIN"
 
 # Messages:
-SELECT_LANGUAGE_TEXT = "Por favor seleccione el idioma\nque desea practicar:"
+SELECT_LANGUAGE_TEXT = "Seleccionar Idioma"
 NO_MORE_CARDS_MESSAGE = ("¡Ha memorizado todas las cartas en este set!\nLa aplicación se cerrará y su progreso se"
                          " reiniciará cuando salga de esta ventana.")
 CONTINUE_MESSAGE = "¿Desea continuar con su progreso guardado?"
@@ -81,7 +83,6 @@ def portuguese_to_spanish():
 def change_language(target_language, target_language_code, target_country_name, target_country_flag_photoimage,
                     word_translated, pronunciation_translated, back_country_flag_photoimage, accent="com",
                     translation_language="Español", translation_language_code="es", translation_country_name="SPAIN"):
-
     global front_language, front_language_code, front_country_name, back_language, back_language_code
     global back_country_name, initial_data_path, updated_data_path, front_card_flag, back_card_flag
     global spain_flag_photoimage, front_language_accent
@@ -255,7 +256,7 @@ word = canvas.create_text(400, 263, text="Word", fill="black", font=WORD_FONT)  
 language = canvas.create_text(400, 150, text=front_language, font=LANGUAGE_FONT)  # Language Text
 pronunciation = canvas.create_text(400, 340, text="/pronunciation/", font=LANGUAGE_FONT)  # IPA Phonetic Transcription
 flag = canvas.create_image(150, 100, image=front_card_flag)  # Flag Img
-score = canvas.create_text(670, 60, text="", fill="black", font=SELECT_LANGUAGE_FONT)
+score = canvas.create_text(670, 60, text="", fill="black", font=SCORE_FONT)
 canvas.grid(row=0, column=0, columnspan=2)
 
 # Buttons:
@@ -274,26 +275,41 @@ root.withdraw()
 # --------------------- Select Language Window -------------------------- #
 language_window = Toplevel()
 language_window.title("Select Language")
-language_window.config(bg=LANGUAGE_WINDOW_BG_COLOR, padx=50, pady=50)
+language_window.config(bg=LANGUAGE_WINDOW_BG_COLOR, padx=50, pady=25)
 language_window.geometry("+420+100")
 language_window.iconphoto(False, icon)
 
 # Label: Select your language
 select_language_label = Label(language_window, text=SELECT_LANGUAGE_TEXT, bg=LANGUAGE_WINDOW_BG_COLOR,
                               font=SELECT_LANGUAGE_FONT, fg=FRONT_FONT_COLOR)
-select_language_label.grid(row=0, column=0, columnspan=3, padx=20, pady=20)
+select_language_label.grid(row=0, column=0, columnspan=3, padx=20, pady=25)
 
+english_label = Label(language_window, text="English", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
+                      fg=FRONT_FONT_COLOR)
+english_label.grid(row=1, column=0, sticky="S")
 english_button = Button(language_window, image=usa_flag_photoimage, bd=3, command=english_to_spanish)
-english_button.grid(row=1, column=0, padx=20, pady=20)
+english_button.grid(row=2, column=0)
 
+italian_label = Label(language_window, text="Italiano", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
+                      fg=FRONT_FONT_COLOR)
+italian_label.grid(row=1, column=1, sticky="S")
 italian_button = Button(language_window, image=italy_flag_photoimage, bd=3, command=italian_to_spanish)
-italian_button.grid(row=1, column=1, padx=20, pady=20)
+italian_button.grid(row=2, column=1, padx=15)
 
+space = Label(language_window, text="",bg=LANGUAGE_WINDOW_BG_COLOR, pady=10)
+space.grid(row=3, column=3)
+
+french_label = Label(language_window, text="Français", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
+                     fg=FRONT_FONT_COLOR)
+french_label.grid(row=4, column=0, sticky="S")
 french_button = Button(language_window, image=france_flag_photoimage, bd=3, command=french_to_spanish)
-french_button.grid(row=2, column=0, padx=20, pady=20)
+french_button.grid(row=5, column=0, padx=20)
 
+portuguese_label = Label(language_window, text="Português", bg=LANGUAGE_WINDOW_BG_COLOR, font=LANGUAGES_SELECTION_FONT,
+                         fg=FRONT_FONT_COLOR)
+portuguese_label.grid(row=4, column=1, sticky="S")
 portuguese_button = Button(language_window, image=brazil_flag_photoimage, bd=3, command=portuguese_to_spanish)
-portuguese_button.grid(row=2, column=1, padx=20, pady=20)
+portuguese_button.grid(row=5, column=1, padx=20)
 
 language_window.protocol("WM_DELETE_WINDOW", on_closing)
 
