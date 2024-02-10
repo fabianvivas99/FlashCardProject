@@ -55,6 +55,7 @@ mixer.init()
 text_to_speech = gTTS(text="Welcome", lang="en", tld="us")
 text_to_speech.save("audio/output.mp3")
 click = mixer.Sound("audio/mouse_click_effect.wav")
+click.set_volume(0.2)
 
 
 def english_to_spanish():
@@ -93,7 +94,6 @@ def change_language(target_language, target_language_code, target_country_name, 
     front_country_name = target_country_name.upper()
     initial_data_path = f"data/{front_language}_data.csv"
     front_card_flag = target_country_flag_photoimage
-
     back_language = translation_language.capitalize()
     back_language_code = translation_language_code
     back_country_name = translation_country_name.upper()
@@ -135,13 +135,17 @@ def flip_card():
 
 def next_card():
     """Generates and shows a new card, then calls the flip_card function after a given time"""
-    global current_card, flip_timer, data, to_learn, text_to_speech, front_language_code
+    global current_card, flip_timer, data, to_learn, text_to_speech, front_language_code, data, to_learn
     root.after_cancel(flip_timer)  # Cancel the previous timer
     click.play()
+    data = pandas.read_csv(initial_data_path)
+    to_learn = data.to_dict(orient="records")
+
     try:
         updated_data = pandas.read_csv(updated_data_path)
         words_to_learn = updated_data.to_dict(orient="records")
-        canvas.itemconfig(score, text=f"{len(to_learn) - len(words_to_learn) + 1} / {len(to_learn) + 1}",
+        # print(len(to_learn))
+        canvas.itemconfig(score, text=f"{len(to_learn) - len(words_to_learn)} / {len(to_learn)}",
                           fill=FRONT_FONT_COLOR)
         if len(words_to_learn) < 2:
             well_done = messagebox.showinfo(message=NO_MORE_CARDS_MESSAGE,
@@ -182,8 +186,9 @@ def remove_known_word():
         words_to_learn = pandas.DataFrame(words_to_learn)
         words_to_learn.to_csv(updated_data_path, mode="w", index=False)
     except FileNotFoundError:
-        to_learn.remove(current_card)
-        words_to_learn = pandas.DataFrame(to_learn)
+        words_to_learn = to_learn
+        words_to_learn.remove(current_card)
+        words_to_learn = pandas.DataFrame(words_to_learn)
         words_to_learn.to_csv(updated_data_path, index=False)
     finally:
         next_card()
