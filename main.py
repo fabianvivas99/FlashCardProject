@@ -18,7 +18,7 @@ FRONT_FONT_COLOR = "black"
 
 back_language = "Español"
 back_language_code = "es"
-back_language_accent = "com.mx"
+back_language_accent = "es"
 front_language = "English"
 front_language_code = "en"
 front_language_accent = "com"
@@ -122,6 +122,7 @@ def flip_card():
         canvas.itemconfig(pronunciation, text="")
         canvas.itemconfig(card, image=card_back)
         canvas.itemconfig(flag, image=back_card_flag)
+        canvas.itemconfig(score, fill=BACK_FONT_COLOR)
         text_to_speech.text = current_card[back_language]
         text_to_speech.lang = back_language_code
         text_to_speech.tld = back_language_accent
@@ -137,6 +138,8 @@ def next_card():
     try:
         updated_data = pandas.read_csv(updated_data_path)
         words_to_learn = updated_data.to_dict(orient="records")
+        canvas.itemconfig(score, text=f"{(len(to_learn) - len(words_to_learn)) + 1} / {len(to_learn)}",
+                          fill=FRONT_FONT_COLOR)
         if len(words_to_learn) < 2:
             well_done = messagebox.showinfo(message=NO_MORE_CARDS_MESSAGE,
                                             title="🎉🏆¡Buen trabajo! 🏆🎉")
@@ -148,6 +151,7 @@ def next_card():
     except FileNotFoundError:
         data = pandas.read_csv(initial_data_path)
         to_learn = data.to_dict(orient="records")
+        canvas.itemconfig(score, text=f"0 / {len(to_learn)}", fill=FRONT_FONT_COLOR)
         current_card = random.choice(to_learn)
     finally:
         canvas.itemconfig(word, fill=FRONT_FONT_COLOR, text=current_card[front_language])
@@ -155,6 +159,7 @@ def next_card():
         canvas.itemconfig(language, fill=FRONT_FONT_COLOR, text=front_language)
         canvas.itemconfig(card, image=card_front)
         canvas.itemconfig(flag, image=front_card_flag)
+
         mixer.init()
         text_to_speech.text = current_card[front_language]
         text_to_speech.lang = front_language_code
@@ -250,6 +255,7 @@ word = canvas.create_text(400, 263, text="Word", fill="black", font=WORD_FONT)  
 language = canvas.create_text(400, 150, text=front_language, font=LANGUAGE_FONT)  # Language Text
 pronunciation = canvas.create_text(400, 340, text="/pronunciation/", font=LANGUAGE_FONT)  # IPA Phonetic Transcription
 flag = canvas.create_image(150, 100, image=front_card_flag)  # Flag Img
+score = canvas.create_text(670, 60, text="", fill="black", font=SELECT_LANGUAGE_FONT)
 canvas.grid(row=0, column=0, columnspan=2)
 
 # Buttons:
